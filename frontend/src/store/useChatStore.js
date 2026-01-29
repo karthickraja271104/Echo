@@ -9,6 +9,7 @@ export const useChatStore = create((set, get) => ({
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
+  replyingTo: null,  // Add this line
 
   getUsers: async () => {
     set({ isUsersLoading: true });
@@ -33,11 +34,15 @@ export const useChatStore = create((set, get) => ({
       set({ isMessagesLoading: false });
     }
   },
+
   sendMessage: async (messageData) => {
-    const { selectedUser, messages } = get();
+    const { selectedUser, messages, replyingTo } = get();  // Add replyingTo to destructuring
     try {
       const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
-      set({ messages: [...messages, res.data] });
+      set({ 
+        messages: [...messages, res.data],
+        replyingTo: null,  // Clear replyingTo after sending
+      });
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -65,4 +70,5 @@ export const useChatStore = create((set, get) => ({
   },
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),
+  setReplyingTo: (message) => set({ replyingTo: message }),  // Add this line
 }));
