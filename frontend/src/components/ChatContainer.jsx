@@ -1,6 +1,6 @@
 import { useChatStore } from "../store/useChatStore";
 import { useEffect, useRef } from "react";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle , Trash } from "lucide-react";
 
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
@@ -18,6 +18,7 @@ const ChatContainer = () => {
     unsubscribeFromMessages,
     replyingTo,
     setReplyingTo,
+    deleteMessage,
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
@@ -88,6 +89,15 @@ const ChatContainer = () => {
               >
                 <MessageCircle size={14} />
               </button>
+              {message.senderId === authUser._id && (
+                <button
+                  onClick={() => deleteMessage(message._id)}
+                  className="text-xs hover:opacity-70 transition text-red-500 hover:text-red-700"
+                  title="Delete message"
+                >
+                  <Trash size={14} />
+                </button>
+              )}
             </div>
             <div className="chat-bubble flex flex-col">
               {message.image && (
