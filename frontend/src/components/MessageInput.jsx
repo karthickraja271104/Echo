@@ -7,7 +7,7 @@ const MessageInput = () => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
-  const { sendMessage } = useChatStore();
+  const { sendMessage, replyingTo, setReplyingTo } = useChatStore();  // Add replyingTo and setReplyingTo
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -36,6 +36,7 @@ const MessageInput = () => {
       await sendMessage({
         text: text.trim(),
         image: imagePreview,
+        replyTo: replyingTo?._id,  // Add this line
       });
 
       // Clear form
@@ -49,6 +50,23 @@ const MessageInput = () => {
 
   return (
     <div className="p-4 w-full">
+      {/* Reply preview */}
+      {replyingTo && (
+        <div className="mb-3 flex items-center gap-2 p-2 bg-base-300 rounded-lg">
+          <div className="flex-1">
+            <p className="text-xs opacity-70">Replying to:</p>
+            <p className="text-sm truncate">{replyingTo.text || "(image)"}</p>
+          </div>
+          <button
+            onClick={() => setReplyingTo(null)}
+            className="btn btn-ghost btn-xs"
+            type="button"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+      )}
+
       {imagePreview && (
         <div className="mb-3 flex items-center gap-2">
           <div className="relative">
@@ -100,10 +118,11 @@ const MessageInput = () => {
           className="btn btn-sm btn-circle"
           disabled={!text.trim() && !imagePreview}
         >
-          <Send size={22} />
+          <Send size={18} />
         </button>
       </form>
     </div>
   );
 };
+
 export default MessageInput;
