@@ -79,7 +79,7 @@ export const sendMessage = async (req, res) => {
     });
 
     await newMessage.save();
-
+    await newMessage.populate("replyTo");
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
