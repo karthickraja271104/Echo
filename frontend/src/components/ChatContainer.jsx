@@ -1,5 +1,6 @@
 import { useChatStore } from "../store/useChatStore";
 import { useEffect, useRef } from "react";
+import { MessageCircle } from "lucide-react";
 
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
@@ -15,6 +16,8 @@ const ChatContainer = () => {
     selectedUser,
     subscribeToMessages,
     unsubscribeFromMessages,
+    replyingTo,
+    setReplyingTo,
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
@@ -54,6 +57,14 @@ const ChatContainer = () => {
             className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
             ref={messageEndRef}
           >
+            {/* Replied message display */}
+            {message.replyTo && (
+              <div className="text-xs opacity-60 mb-1 ml-2 p-2 border-l-2 border-gray-500">
+                <p className="font-semibold">Replying to:</p>
+                <p className="truncate">{message.replyTo.text || "(image)"}</p>
+              </div>
+            )}
+
             <div className=" chat-image avatar">
               <div className="size-10 rounded-full border">
                 <img
@@ -66,10 +77,17 @@ const ChatContainer = () => {
                 />
               </div>
             </div>
-            <div className="chat-header mb-1">
-              <time className="text-xs opacity-50 ml-1">
+            <div className="chat-header mb-1 flex items-center gap-2">
+              <time className="text-xs opacity-50">
                 {formatMessageTime(message.createdAt)}
               </time>
+              <button
+                onClick={() => setReplyingTo(message)}
+                className="text-xs hover:opacity-70 transition"
+                title="Reply"
+              >
+                <MessageCircle size={14} />
+              </button>
             </div>
             <div className="chat-bubble flex flex-col">
               {message.image && (
