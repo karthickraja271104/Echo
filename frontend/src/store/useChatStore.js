@@ -34,7 +34,15 @@ export const useChatStore = create((set, get) => ({
       set({ isMessagesLoading: false });
     }
   },
-
+  deleteMessage: async (messageId) => {
+  const { messages } = get();
+  try {
+    await axiosInstance.delete(`/messages/${messageId}`);
+    set({ messages: messages.filter(msg => msg._id !== messageId) });
+  } catch (error) {
+    toast.error(error.response.data.message);
+  }
+  },
   sendMessage: async (messageData) => {
     const { selectedUser, messages, replyingTo } = get();  // Add replyingTo to destructuring
     try {
